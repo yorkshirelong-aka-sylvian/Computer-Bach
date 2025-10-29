@@ -106,7 +106,7 @@ console.log(root)
 let knob2 = gui. Knob({
   label: 'root',
   x: 50, y: 30, size: 1.5,
-  min: 0, max: 7, curve: 2,
+  min: 0, max: 15, curve: 2,
   callback: function(x){
     x = floor(x)
     if (x == 0){
@@ -132,6 +132,30 @@ let knob2 = gui. Knob({
     }
     if (x == 7){
       Theory.root = 'c'
+    }
+    if (x == 8){
+      Theory.root = 'C'
+    }
+    if (x == 9){
+      Theory.root = 'G'
+    }
+    if (x == 10){
+      Theory.root = 'D'
+    }
+    if (x == 11){
+      Theory.root = 'A'
+    }
+    if (x == 12){
+      Theory.root = 'E'
+    }
+    if (x == 13){
+      Theory.root = 'B'
+    }
+    if (x == 14){
+      Theory.root = 'F'
+    }
+    if (x == 15){
+      Theory.root = 'C'
     }
   } 
 })
