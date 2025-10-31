@@ -9,7 +9,6 @@ s1.initGui()
 s1.connect(output)
 
 
-
 let gui = new p5(sketch, Canvas)
 // === All Sequences ===
 let knob0 = gui.Fader({
@@ -26,8 +25,6 @@ let knob1 = gui.Fader({
   callback: function(x){s1.expr(i=> i%5+x)}
 })
 
-// === All Sequences ===
-
 /*
 let knob2 = gui.Knob({
   label:'root',
@@ -36,7 +33,20 @@ let knob2 = gui.Knob({
   callback: function(x){s1.expr(i=> i%5 + root)}
 })
 */
+// === All Drums ===
+let knob3 = gui.Fader({
+  label:'Drum0',
+  x: 45, y:1, size:1,
+  min:0, max:7, curve:2,
+  callback: function(k){d.expr(i=> i%k)}
+})
 
+let knob4 = gui.Fader({
+  label:'Drum1',
+  x: 55, y:1, size:1,
+  min:0, max:7, curve:2,
+  callback: function(k){d1.expr(i=> i%5+k)}
+})
 // === Knobs(Change Root) ===
 Theory.tempo = 120
 
@@ -123,6 +133,7 @@ Intru.textColor = [255,255,255]
 let lineA = gui.Line(0,27,100,27,{ border:4})
 let lineB = gui.Line(0,55,100,55,{ border:4})
 let lineC = gui.Line(35,0,35,100,{ border:4})
+let lineD = gui.Line(70,0,70,100,{ border:4})
 /*
 let vcf_fader = gui.Slider({
   label:'cutoff',
