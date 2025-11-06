@@ -1,13 +1,15 @@
 let s = new Twinkle()
-s.initGui()
+//s.initGui()
 let output = new Tone.Multiply(.1).toDestination()
 s.connect(output)
 
 
 let s1 = new Twinkle()
-s1.initGui()
+//s1.initGui()
 s1.connect(output)
 
+let d = new DrumSampler()
+d.connect(output)
 
 let gui = new p5(sketch, Canvas)
 // === All Sequences ===
