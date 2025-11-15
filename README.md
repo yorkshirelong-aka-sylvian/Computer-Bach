@@ -27,11 +27,13 @@ The two buttons in the second line are NOT WORKING currently, but we are fixing 
 ### Prototype UI2
 
 <img width="1192" height="559" alt="Screenshot 2025-11-16 at 00 37 04" src="https://github.com/user-attachments/assets/4ba50b2d-cde0-43e5-8967-4444e4b5a682" />
-Most functions are working.
 
 Unfortunately the two buttons are still NOT WORKING
 
 WARNING: The intensity of sound is not balanced
 
-If you find it difficult to use or have any problems or have some ideas to share with us, please contact: yorkshirelong@gmail.com or 2631701504@qq.com for calling Michael Zhou (yorkshirelong) or ashley.wang9@gmail.com/ashleywang9@qq.com for calling Ashley Wang (Ashleywang9).
+### Contacts
+If you find it difficult to use or have any problems or have some ideas to share with us, please contact:
+- Michael Zhou (yorkshirelong): yorkshirelong@gmail.com or 2631701504@qq.com
+- Ashley Wang (Ashleywang9): ashley.wang9@gmail.com or ashleywang9@qq.com
 
