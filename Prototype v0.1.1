@@ -1,0 +1,303 @@
+initCollab()
+chClient.joinRoom('foo')
+chClient.debug = false
+//
+let gui = new p5(sketch, Canvas)
+let output = new Tone.Multiply(.1).toDestination()
+//
+let s = new Twinkle()
+let s1 = new Twinkle()
+let d = new DrumSampler()
+let d1 = new DrumSampler()
+let s2 = new Simpler()
+let s3 = new Simpler()
+let verb = new Reverb()
+//
+s.connect(output)
+s1.connect(output)
+d.connect(output)
+d1.connect(output)
+s2.connect(output)
+s2.connect(verb)
+s3.connect(output)
+s3.connect(verb)
+verb.connect(output)
+//
+s.velocity = 0.1
+s1.velocity = 0.1
+s2.load('piano')
+s3.load('piano')
+s2.release= .5
+s3.release= .5
+verb.level= .1
+verb.stretchIR(2)
+//
+s2.expr(i => {
+  if(i<192) return (i*3 + floor(i/12))%12
+  else return (i%24/6 + floor(i/24)*2%7)%12
+}, 480, '8n')
+
+s3.expr(i=> {
+  if(i<128) return i%8%5<2 ? i/16%5 : '.'
+  else return i%16%3
+}, 480, '8n')
+s2.sustain = .01
+s3.sustain = .01
+s3.octave = -1
+// === All Sequences ===
+let knob0 = gui.Fader({
+  label:'Seq0',
+  x: 10, y:1, size:1,
+  min:0, max:7, curve:2,
+  callback: function(x){s.expr(i=> i%x)}
+})
+
+let knob1 = gui.Fader({
+  label:'Seq1',
+  x: 20, y:1, size:1,
+  min:0, max:7, curve:2,
+  callback: function(x){s1.expr(i=> i%5+x)}
+})
+// === All Drums ===
+let knob3 = gui.Fader({
+  label:'Drum0',
+  x: 80, y:1, size:1,
+  min:0, max:12, curve:1,
+  callback: function(k){
+    console.log('snare', k)
+    d.sequence( expr(i => (i)%k < 3 ? 'X':'.', 8), '16n', 1)
+  }
+})
+
+let knob4 = gui.Fader({
+  label:'Drum1',
+  x: 90, y:1, size:1,
+  min:0, max:10, curve:1,
+  callback: function(k){
+    console.log('kick', k)
+    d1.sequence( expr(i => (i+5)%k < 3 ? 'O':'.', 8), '16n')
+  }
+})  
+// === Knobs(Chage Root) ===
+let knob2 = gui. Knob({
+  label: 'Root',
+  x: 52, y: 14, size: 1,
+  min: 0, max: 15, curve: 2,
+  callback: function(x){
+    x = Math.floor(x)
+    if (x == 0){
+      Theory.root = 'c'
+    }
+    if (x == 1){
+      Theory.root = 'g'
+    }
+    if (x == 2){
+      Theory.root = 'd'
+    }
+    if (x == 3){
+      Theory.root = 'a'
+    }
+    if (x == 4){
+      Theory.root = 'e'
+    }
+    if (x == 5){
+      Theory.root = 'b'
+    }
+    if (x == 6){
+      Theory.root = 'f'
+    }
+    if (x == 7){
+      Theory.root = 'c'
+    }
+    if (x == 8){
+      Theory.root = 'C'
+    }
+    if (x == 9){
+      Theory.root = 'G'
+    }
+    if (x == 10){
+      Theory.root = 'D'
+    }
+    if (x == 11){
+      Theory.root = 'A'
+    }
+    if (x == 12){
+      Theory.root = 'E'
+    }
+    if (x == 13){
+      Theory.root = 'B'
+    }
+    if (x == 14){
+      Theory.root = 'F'
+    }
+    if (x == 15){
+      Theory.root = 'C'
+    }
+  } 
+})
+
+// === Buttons ===
+let Instru0 = gui.Button({
+  label:'Instrument0',
+  callback: function(){let s = new Simpler('softPiano')},
+  size: 1, border: 20,
+  borderColor: [255,0,0],
+  x:18, y:42
+})
+Instru0.textColor = [255,255,255]
+
+let Instru1 = gui.Button({
+  label:'Instrument1',
+  callback: function(){let s = new Simpler('softPiano')},
+  size: 1, border: 20,
+  borderColor: [255,0,0],
+  x:85, y:42
+})
+Instru1.textColor = [255,255,255]
+
+// === Pad ===
+let Pad = gui.Pad({
+  label: 'Pad',
+  x: 52, y:80, size:2, value:[0,0],
+  callback: function(val){ 
+    console.log('xy', val)
+    s.cutoff = val[0] * 2000 + 100
+    s.Q = val[1] * 10 + 1
+    s.sustain = 0.1
+  }
+})
+
+let xy = gui.Pad({
+  label: 'xy',
+  x:18,y:80, size:2, value:[0,0],
+  callback: x=> {
+    //console.log(x)
+    s2.velocity = x[0]*127 + 20
+   s2.release = x[1]*2+.01
+    s2.sustain = x[1]/2
+    verb.level= x[1]
+  }
+})
+xy.setLink('xy')
+
+let xy2 = gui.Pad({
+  label: 'xy2', 
+  x:85,y:80, size:2, value:[0,0],
+  callback: x=> {
+    //console.log(x)
+    s3.velocity = x[0]*127 + 20
+   s3.release = x[1]*4+.01
+    s3.sustain = x[1]/2
+    verb.damping = x[1] * 2000 + 500
+  }
+})
+xy2.setLink('xy2')
+// === Lines ===
+let lineA = gui.Line(0,27,100,27,{ border:4})
+let lineB = gui.Line(0,55,100,55,{ border:4})
+let lineC = gui.Line(35,0,35,27,{ border:4})
+let lineD = gui.Line(70,0,70,27,{ border:4})
+let lineE = gui.Line(35,55,35,100,{ border:4})
+let lineF = gui.Line(70,55,70,100,{ border:4})
+/*
+let vcf_fader = gui.Slider({
+  label:'cutoff',
+  x: 30, y: 80, size: 5,
+  min:50, max: 5000, curve: 2,
+  orientation: 'horizontal'
+})
+vcf_fader.set(1000)
+
+let xy = gui.Pad({
+  label: 'xy',
+  x: 15, y:75, size:2, value:[0,0],
+  callback: function(val){ 
+    console.log('xy', val)
+    //s.expr(i=> (val[0]-val[1])*i)
+    s.cutoff = val[0] * 2000 + 100
+    s.decay = val[1] * 1 + .01
+    s.sustain = 0.1
+    s.release = val[1] * 1 + .01
+  }
+})
+s.sustainTime = 0
+*/
+/*
+let freq_knob = gui.Knob({
+  label:'freq',
+  x: 12, y: 30, size:1.5,
+  min:0, max: 8, curve: 2,
+  callback: function(x){ s.expr(i=> i%(1+x)), 16}
+})
+freq_knob.set( 300 )
+freq_knob.borderColor = [115, 53, 10]
+freq_knob.accentColor = [252, 174, 25]
+freq_knob.border = 10
+freq_knob.x = 12
+freq_knob.y = 25
+freq_knob.callback = function(x){ s.expr(i=> x, 16)}
+
+s.sequence(' 0 2 1 3')
+*/
+
+/*
+let wave_radio = gui.Radio({
+  label:'waveform',
+  radioOptions: ['sine','sawtooth','square','triangle'],
+  callback: function(x){ console.log('radio') },
+  size: 1,
+  x: 50, y:20,
+  horizontal: false
+})
+wave_radio.set('square')
+wave_radio.x = 40
+wave_radio.y = 25
+
+let rolloff_radio =  gui.RadioButton({
+  label:'rolloff',
+  radioOptions: [-12,-24,-48],
+  callback: function(x){},
+  x: 50, y:52,size:1, orientation:'horizontal'
+})
+rolloff_radio.set('-48')
+rolloff_radio.textColor = [255,255,255]
+rolloff_radio.x = 60
+rolloff_radio.y = 25
+
+let enable_toggle =  gui.Toggle({
+  label:'enable',
+  x: 88, y:30
+})
+enable_toggle.textColor = [255,255,255]
+*/
+
+
+/*
+let env_trigger = gui.Button({
+  label:'trig',
+  callback: function(){ },
+  size: 1.5, border: 20,
+  borderColor: [255,0,0],
+  x:88, y:85
+})
+env_trigger.textColor = [255,255,255]
+/*
+let exampleName =  gui.Text({
+  label: 'GUI Example', x:13, y:5, size:2,
+  border: 2, borderRadius: 3,
+  textFont: 'title'
+})
+exampleName.accentColor = [252, 174, 25]
+exampleName.borderRadius = [252, 174, 25]
+
+let lineA = gui.Line(0,55,100,55,{
+  border:4, color: 'accent'
+})
+let lineB = gui.Line(27,0,27,100)
+let lineC = gui.Line(75,0,75,100)/*
+  Alt(option)-Enter: Evaluate Line
+  Alt(option)-Shift-Enter: Evaluate Block
+*//*
+  Alt(option)-Enter: Evaluate Line
+  Alt(option)-Shift-Enter: Evaluate Block
+*/
