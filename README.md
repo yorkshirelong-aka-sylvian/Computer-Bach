@@ -14,7 +14,7 @@ The two Faders on the top left controls two randomly generated melodies (Bass an
 
 The two Faders on the top right controls two drum lines, currently one bass and one snare. We use a brand new way to control the Drum: you may choose the drum loop by faders. This gives a lot of possibilities for creative composition.
 
-### Prototype UI
+### Prototype UI1
 
 <img width="1751" height="703" alt="截屏2025-11-10 09 24 05" src="https://github.com/user-attachments/assets/a9b04531-7977-4849-8416-22312353b770" />
 
@@ -22,6 +22,16 @@ The faders are the same as in the initial design. The knob between the two fader
 
 The X-Y pad below the knob controls the cutoff and delay of the instrument (not the drum).
 
-The two bottons in the second line are NOT WORKING currently, but we are fixing this to make it able to choose present instruments.
+The two buttons in the second line are NOT WORKING currently, but we are fixing this to make it able to choose present instruments.
 
-If you find it difficult to use or have any problems or have some ideas to share with us, please contact: yorkshirelong@gmail.com or 2631701504@qq.com for calling Michael Zhou (yorkshirelong).
+### Prototype UI2
+
+<img width="1192" height="559" alt="Screenshot 2025-11-16 at 00 37 04" src="https://github.com/user-attachments/assets/4ba50b2d-cde0-43e5-8967-4444e4b5a682" />
+Most functions are working.
+
+Unfortunately the two buttons are still NOT WORKING
+
+WARNING: The intensity of sound is not balanced
+
+If you find it difficult to use or have any problems or have some ideas to share with us, please contact: yorkshirelong@gmail.com or 2631701504@qq.com for calling Michael Zhou (yorkshirelong) or ashley.wang9@gmail.com/ashleywang9@qq.com for calling Ashley Wang (Ashleywang9).
+
