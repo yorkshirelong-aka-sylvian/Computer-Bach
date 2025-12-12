@@ -1,0 +1,417 @@
+/*
+Computer Bach Dec 13 Update
+Version of Michael (An ALTERNATIVE version)
+*/
+initCollab()
+chClient.joinRoom('foo')
+chClient.debug = false
+//
+let gui = new p5(sketch, Canvas)
+let output = new Tone.Multiply(.1).toDestination()
+//
+let s = new Twinkle()
+let s1 = new Twinkle()
+let b0 = new Twinkle()
+let b1 = new Twinkle()
+let d = new DrumSampler()
+let d1 = new DrumSampler()
+let s2 = new Simpler()
+let s3 = new Simpler()
+//let verb = new Reverb()
+//
+s.connect(output)
+s1.connect(output)
+b0.connect(output)
+b1.connect(output)
+d.connect(output)
+d1.connect(output)
+s2.connect(output)
+//s2.connect(verb)
+s3.connect(output)
+//s3.connect(verb)
+//verb.connect(output)
+//
+s.velocity = 0.01
+s1.velocity = 0.01
+b0.velocity = 0.01
+b1.velocity = 0.01
+s2.load('softpiano')
+s3.load('softpiano')
+s2.release= .5
+s3.release= .5
+s2.sustain = .01
+s3.sustain = .01
+s3.octave = -1
+//verb.level= .1
+//verb.stretchIR(2)
+d.snare_vca = 0.7
+d.snare_rate = 0.74
+d.snare_decay = 0.85
+d.hat_vca = 0.7
+d1.kick_rate = 4
+d1.kick_decay = 1
+d1.dryKick = 1
+d1.kick_rate = 5
+//
+
+/*
+s2.expr(i => {
+  if(i<192) return (i*3 + Math.floor(i/12))%12;
+  else return (i%24/6 + Math.floor(i/24)*2%7)%12
+}, 480, '8n')
+
+s3.expr(i=> {
+  if(i<128) return i%8%5<2 ? i/16%5 : '.';
+  else return i%16%3
+}, 480, '8n')
+*/
+
+// === All Sequences ===
+let knob = gui.Fader({
+  label:'Seq0',
+  x: 5, y:1, size:0.7,
+  min:0, max:7, curve:2,
+  callback: function(x){s.expr(i=> i%x)}
+})
+knob.textColor = [255,255,255]
+knob.setLink('seq0')
+
+let knob1 = gui.Fader({
+  label:'Seq1',
+  x: 10, y:1, size:0.7,
+  min:0, max:7, curve:2,
+  callback: function(x){s1.expr(i=> i%5+x)}
+})
+knob1.textColor = [255,255,255]
+knob1.setLink('seq1')
+
+/////////////////////////////////////////////
+let knob5 = gui.Fader({
+  label:'Bass0',
+  x: 15, y:1, size:0.7,
+  min:0, max:7, curve:2,
+  callback: function(x){b0.expr(i=> i%2+x)}
+})
+knob5.textColor = [255,255,255]
+knob5.setLink('Bass0')
+
+let knob6 = gui.Fader({
+  label:'Bass1',
+  x: 20, y:1, size:0.7,
+  min:0, max:7, curve:2,
+  callback: function(x){b1.expr(i=> i%5+x-7)}
+})
+knob6.textColor = [255,255,255]
+knob6.setLink('Bass1')
+
+/////////////////////////////////////////////
+
+// === All Drums ===
+let knob3 = gui.Fader({
+  label:'Drum',
+  x: 80, y:1, size:0.7,
+  min:0, max:12, curve:1,
+  callback: function(k){
+    console.log('snare', k)
+    d.sequence( expr(i => i%k == 1 ? 'X': i%k == 4 ? '*': '.', 8), '16n', 1)
+  }
+})
+knob3.textColor = [255,255,255]
+knob3.setLink('drum')
+
+
+let knob4 = gui.Fader({
+  label:'Drum1',
+  x: 90, y:1, size:0.7,
+  min:0, max:10, curve:1,
+  callback: function(k){
+    console.log('kick', k)
+    d1.sequence( expr(i => (i+5)%k > 3 ? 'O':'.', 8), '16n')
+  }
+})  
+knob4.textColor = [255,255,255]
+knob4.setLink('drum1')
+
+// === Pad ===
+let Pad = gui.Pad({
+  label: 'Pad',
+  x: 52, y:42, size:1, value:[0,0],
+  callback: function(val){ 
+    console.log('xy', val)
+    s.cutoff = val[0] * 2000 + 100
+    s.Q = val[1] * 10 + 1
+    s.sustain = 0.1
+  }
+})
+Pad.textColor = [255,255,255]
+
+let xy = gui.Pad({
+  label: 'xy',
+  x:16,y:42, size:1, value:[0,0],
+  callback: x=> {
+    //console.log(x)
+    s1.velocity = x[0]*127 + 20
+    s1.sustain = x[1]/2
+    //verb.level= x[1]
+    xy.textColor = [255,255,255]
+  }
+})
+xy.setLink('xy')
+
+let xy2 = gui.Pad({
+  label: 'xy2', 
+  x:85,y:42, size:1, value:[0,0],
+  callback: x=> {
+    //console.log(x)
+    s3.velocity = x[0]*127 + 20
+    s3.release = x[1]*4+.01
+    s3.sustain = x[1]/2
+    //verb.damping = x[1] * 2000 + 500
+    xy2.textColor = [255,255,255]
+  }
+})
+xy2.setLink('xy2')
+
+// === Stop ===
+let Stops = gui.Button({
+  label:'Stop s',
+  callback: function(){
+    s.stop()
+  },
+  size: 0.2, border: 10,
+  borderColor: [64, 164, 223],
+  x:5, y:23
+})
+Stops.textColor = [255,255,255]
+Stops.setLink('stops')
+
+let Stops1 = gui.Button({
+  label:'Stop s1',
+  callback: function(){
+    s1.stop()
+  },
+  size: 0.2, border: 10,
+  borderColor: [64, 164, 223],
+  x:10, y:23
+})
+Stops1.textColor = [255,255,255]
+Stops1.setLink('stops1')
+
+
+let Stopb0 = gui.Button({
+  label:'Stop b0',
+  callback: function(){
+    b0.stop()
+  },
+  size: 0.2, border: 10,
+  borderColor: [64, 164, 223],
+  x:15, y:23
+})
+Stopb0.textColor = [255,255,255]
+Stopb0.setLink('stops1')
+
+
+let Stopb1 = gui.Button({
+  label:'Stop b1',
+  callback: function(){
+    b1.stop()
+  },
+  size: 0.2, border: 10,
+  borderColor: [64, 164, 223],
+  x:20, y:23
+})
+Stopb1.textColor = [255,255,255]
+Stopb1.setLink('stops1')
+
+let Stopd = gui.Button({
+  label:'Stop d',
+  callback: function(){
+    d.stop()
+  },
+  size: 0.2, border: 10,
+  borderColor: [64, 164, 223]	,
+  x:80, y:23
+})
+Stopd.textColor = [255,255,255]
+Stopd.setLink('stopd')
+
+let Stopd1 = gui.Button({
+  label:'Stop d1',
+  callback: function(){
+    d1.stop()
+  },
+  size: 0.2, border: 10,
+  borderColor: [64, 164, 223]	,
+  x:90, y:23
+})
+Stopd1.textColor = [255,255,255]
+Stopd1.setLink('stopd1')
+
+// === Lines ===
+let lineA = gui.Line(0,27,100,27,{ border:4})
+let lineB = gui.Line(0,55,100,55,{ border:4})
+let lineC = gui.Line(35,0,35,27,{ border:4})
+let lineD = gui.Line(70,0,70,27,{ border:4})
+let lineG = gui.Line(0,78,100,78,{ border:4})
+
+
+
+/* === Basses ===
+b1.expr(i => {
+  if(i<192) return (i*3 + floor(i/12))%12;
+  else return (i%24/6 + floor(i/24)*2%7)%12
+}, 480, '8n')
+
+b2.expr(i=> {
+  if(i<128) return i%8%5<2 ? i/16%5 : '.';
+  else return i%16%3
+}, 480, '8n')*/
+
+
+
+/* === Basses ===
+let fader0 = gui.Fader({
+  label:'Bass0',
+  x: 10, y:-5, size:1,
+  min:0, max:7, curve:1,
+  callback: function(x){s.expr(i=> i%x - 10 , '4n')}
+})
+fader0.textColor = [255,255,255]
+
+let fader1 = gui.Fader({
+  label:'Bass1',
+  x: 20, y:-5, size:1,
+  min:0, max:7, curve:1,
+  callback: function(x){s1.expr(i=> i%5+x)}
+})
+fader1.textColor = [255,255,255]
+*/
+
+
+//RadioButtons for Key select
+let keyname = 'C'
+let keytype = 'Major'
+
+let key = gui.RadioButton({
+  label: 'keyName', 
+  x:0, y:10, size:0.5, radioOptions:[' C ', ' G ', ' D ', ' A ', ' E ', ' B ', ' F ', ' C# ', ' G# ', ' D# ', ' A# ', ' E# ', ' B# ', ' F# '],
+  callback: x => {
+    keyname = x.trim()
+    if(keytype == 'Major'){
+      Theory.root = keyname
+    }
+    if(keytype == 'Minor'){
+      Theory.root = keyname.toLowerCase()
+    }
+    console.log(keyname, Theory.root)
+    
+  },
+  orientation: 'horizontal'
+})
+key.setLink('keyMajor')
+key.x = 52
+key.size = 0.4
+key.textColor = [255,255,255]
+Theory.root = 'C'
+console.log( key )
+console.log(keyname,keytype)
+console.log(key.value)
+
+let key1 = gui.RadioButton({
+  label: 'Major/Minor', 
+  x:10, y:20, size:0.5, radioOptions:['Major', 'Minor'],
+  callback: x=> {
+    //Theory.root = key.value.trim()
+    //console.log( Theory.root )
+    //console.log(x)
+    keytype = x
+    if(keytype == 'Major'){
+      Theory.root = keyname
+    }
+    if(keytype == 'Minor'){
+      Theory.root = keyname.toLowerCase()
+    }
+    
+  },
+  orientation: 'horizontal'
+})
+key1.setLink('Major/Minor')
+key1.x = 52
+key1.size = 0.5
+key1.textColor = [255,255,255]
+
+
+Theory.tempo = 120
+
+
+
+//volume
+let fader0 = gui.Fader({
+  label:'Seq0',
+  x: 20, y:60, size:0.6,
+  min:0, max:100, curve:1,
+  callback: function(x){
+    s.velocity = x
+  }
+})  
+fader0.textColor = [255,255,255]
+fader0.setLink('fader0')
+//
+let fader1 = gui.Fader({
+  label:'Seq1',
+  x:30, y:60, size:0.6,
+  min:0, max:100, curve:1,
+  callback: function(x){
+    s1.velocity = x
+  }
+})  
+fader1.textColor = [255,255,255]
+fader1.setLink('fader1')
+
+//
+let fader2 = gui.Fader({
+  label:'Bass0',
+  x:40, y:60, size:0.6,
+  min:0, max:100, curve:1,
+  callback: function(x){
+    b0.velocity = x
+  }
+})  
+fader2.textColor = [255,255,255]
+fader2.setLink('fader2')
+
+//
+let fader3 = gui.Fader({
+  label:'Bass1',
+  x:50, y:60, size:0.6,
+  min:0, max:100, curve:1,
+  callback: function(x){
+    b1.velocity = x
+  }
+})  
+fader3.textColor = [255,255,255]
+fader3.setLink('fader3')
+
+//
+let fader4 = gui.Fader({
+  label:'Drum',
+  x:60, y:60, size:0.6,
+  min:0, max:100, curve:1,
+  callback: function(x){
+    d.velocity = x
+  }
+})  
+fader4.textColor = [255,255,255]
+fader4.setLink('fader4')
+
+//
+let fader5 = gui.Fader({
+  label:'Drum1',
+  x:70, y:60, size:0.6,
+  min:0, max:100, curve:1,
+  callback: function(x){
+    d1.velocity = x
+  }
+})  
+fader5.textColor = [255,255,255]
+fader5.setLink('fader5')
