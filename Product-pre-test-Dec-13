@@ -250,8 +250,8 @@ Stopd1.setLink('stopd1')
 // === Lines ===
 let lineA = gui.Line(0,27,100,27,{ border:4})
 let lineB = gui.Line(0,55,100,55,{ border:4})
-let lineC = gui.Line(35,0,35,27,{ border:4})
-let lineD = gui.Line(70,0,70,27,{ border:4})
+let lineC = gui.Line(30,0,30,27,{ border:4})
+let lineD = gui.Line(72,0,72,27,{ border:4})
 let lineG = gui.Line(0,78,100,78,{ border:4})
 
 
