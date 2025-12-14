@@ -1,5 +1,5 @@
 /*
-Computer Bach Dec 13 Update
+Computer Bach Dec 14 Update
 */
 initCollab()
 chClient.joinRoom('foo')
@@ -16,7 +16,7 @@ let d = new DrumSampler()
 let d1 = new DrumSampler()
 let s2 = new Simpler()
 let s3 = new Simpler()
-let verb = new Reverb()
+//let verb = new Reverb()
 //
 s.connect(output)
 s1.connect(output)
@@ -25,10 +25,10 @@ b1.connect(output)
 d.connect(output)
 d1.connect(output)
 s2.connect(output)
-s2.connect(verb)
+//s2.connect(verb)
 s3.connect(output)
-s3.connect(verb)
-verb.connect(output)
+//s3.connect(verb)
+//verb.connect(output)
 //
 s.velocity = 0.01
 s1.velocity = 0.01
@@ -41,8 +41,8 @@ s3.release= .5
 s2.sustain = .01
 s3.sustain = .01
 s3.octave = -1
-verb.level= .1
-verb.stretchIR(2)
+//verb.level= .1
+//verb.stretchIR(2)
 d.snare_vca = 0.7
 d.snare_rate = 0.74
 d.snare_decay = 0.85
